@@ -1,0 +1,1314 @@
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Poster Motion Studio</title>
+
+<style>
+:root {
+  --bg: #0b1220;
+  --panel: #121c2d;
+  --line: #263650;
+  --text: #eef5ff;
+  --muted: #9fb0c9;
+  --accent: #28c3ee;
+  --accent2: #4f7cff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(circle at 12% 0%, #172b46, transparent 32%), var(--bg);
+  font-family: "Noto Sans Bengali", "Nirmala UI", Arial, sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+}
+
+button, input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.topbar {
+  min-height: 72px;
+  padding: 14px 4.5%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid #24324a;
+  background: #09101dcc;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  backdrop-filter: blur(14px);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 800;
+}
+
+.logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: grid;
+  place-items: center;
+  color: #061321;
+  font-size: 21px;
+}
+
+.brand small {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+.pill {
+  border: 1px solid #2e4563;
+  border-radius: 99px;
+  padding: 8px 12px;
+  color: #a9c7e6;
+  font-size: 12px;
+}
+
+main {
+  max-width: 1320px;
+  margin: auto;
+  padding: 28px 24px 48px;
+}
+
+.intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.eyebrow {
+  font-size: 12px;
+  letter-spacing: 1.6px;
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.intro h1 {
+  font-size: clamp(25px, 3vw, 38px);
+  margin: 8px 0;
+}
+
+.intro p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 650px;
+  font-size: 14px;
+}
+
+.status {
+  font-size: 12px;
+  color: #a8bdd5;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(320px, .7fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.panel {
+  background: linear-gradient(180deg, #142035, #101a2a);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 16px 45px #0002;
+}
+
+.panel-head {
+  padding: 17px 20px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.panel-head h2 {
+  font-size: 15px;
+  margin: 0;
+}
+
+.panel-head span {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.preview-wrap {
+  padding: 20px;
+}
+
+.stage {
+  position: relative;
+  min-height: 390px;
+  height: min(61vw, 680px);
+  max-height: 680px;
+  background: radial-gradient(ellipse at center, #233953, #0a1220 72%);
+  border: 1px solid #293c57;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+#poster {
+  display: none;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  transform-origin: center center;
+  will-change: transform, filter;
+}
+
+.empty {
+  padding: 30px;
+  text-align: center;
+  max-width: 390px;
+}
+
+.upload-icon {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 17px;
+  border: 1px dashed #47718e;
+  border-radius: 22px;
+  background: #18314a;
+  display: grid;
+  place-items: center;
+  font-size: 30px;
+  color: var(--accent);
+}
+
+.empty h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+.empty p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+  margin: 0 0 20px;
+}
+
+.btn {
+  border: 0;
+  border-radius: 11px;
+  padding: 11px 16px;
+  font-weight: 750;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: .2s;
+}
+
+.btn-primary {
+  color: #041522;
+  background: linear-gradient(100deg, #3dd7f1, #6d91ff);
+}
+
+.btn-secondary {
+  background: #1b2a41;
+  color: #dceaff;
+  border: 1px solid #344863;
+}
+
+.btn:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+.stage-overlay {
+  position: absolute;
+  left: 13px;
+  right: 13px;
+  bottom: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.stage-tag {
+  background: #081321cc;
+  border: 1px solid #ffffff1c;
+  padding: 7px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  color: #d5e6fa;
+}
+
+.preview-controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.preview-controls .btn {
+  flex: 1;
+}
+
+.timeline {
+  margin-top: 17px;
+  background: #0b1423;
+  border: 1px solid #24344c;
+  border-radius: 11px;
+  padding: 12px 13px;
+}
+
+.timeline-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.track {
+  height: 5px;
+  background: #263852;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.track-fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+}
+
+.settings {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.field-label {
+  font-size: 13px;
+  font-weight: 750;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.field-label small {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.preset-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.preset {
+  border: 1px solid #2a3c55;
+  background: #111e30;
+  color: #dce9fb;
+  border-radius: 12px;
+  padding: 12px;
+  text-align: left;
+  min-height: 76px;
+}
+
+.preset.active {
+  border-color: var(--accent);
+  background: linear-gradient(135deg, #163a50, #1b2b48);
+}
+
+.preset .emoji {
+  font-size: 18px;
+  display: block;
+  margin-bottom: 7px;
+}
+
+.preset strong {
+  display: block;
+  font-size: 12px;
+}
+
+.preset small {
+  display: block;
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.duration-options {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 7px;
+}
+
+.duration {
+  background: #101d2e;
+  border: 1px solid #2b3e58;
+  color: #b8c9df;
+  padding: 10px 4px;
+  border-radius: 9px;
+  font-size: 12px;
+}
+
+.duration.active {
+  background: #193a51;
+  border-color: var(--accent);
+  color: #e8fbff;
+  font-weight: 800;
+}
+
+.switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 12px 0;
+  border-bottom: 1px solid #23334b;
+}
+
+.switch-row strong {
+  font-size: 12px;
+  display: block;
+}
+
+.switch-row small {
+  font-size: 11px;
+  color: var(--muted);
+  display: block;
+  margin-top: 4px;
+}
+
+.switch {
+  position: relative;
+  width: 39px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  border-radius: 99px;
+  background: #34445a;
+  cursor: pointer;
+}
+
+.slider:before {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  left: 3px;
+  top: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: .2s;
+}
+
+.switch input:checked + .slider {
+  background: #168db4;
+}
+
+.switch input:checked + .slider:before {
+  transform: translateX(17px);
+}
+
+.export-box {
+  padding: 16px;
+  border: 1px solid #2a4660;
+  background: linear-gradient(135deg, #142d42, #18243d);
+  border-radius: 14px;
+}
+
+.export-box h3 {
+  font-size: 14px;
+  margin: 0 0 6px;
+}
+
+.export-box p {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0 0 13px;
+}
+
+.export-box .btn {
+  width: 100%;
+}
+
+.progress-wrap {
+  display: none;
+  margin-top: 12px;
+}
+
+.progress-text {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #b7c9de;
+  margin-bottom: 7px;
+}
+
+.progress-track {
+  height: 6px;
+  background: #2b3b51;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #2dd4bf, #42a5ff);
+}
+
+.notice {
+  padding: 12px 14px;
+  background: #101b2b;
+  border: 1px solid #273851;
+  border-radius: 11px;
+  color: #9fb4ce;
+  font-size: 11px;
+  line-height: 1.65;
+}
+
+.notice b {
+  color: #dcecff;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  color: #7186a3;
+  font-size: 11px;
+  padding: 20px 4px 0;
+}
+
+.toast {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  max-width: 360px;
+  background: #eaf8ff;
+  color: #0d2231;
+  padding: 13px 17px;
+  border-radius: 12px;
+  box-shadow: 0 15px 45px #0005;
+  font-size: 13px;
+  font-weight: 650;
+  z-index: 10;
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .stage {
+    height: min(95vw, 700px);
+    min-height: 300px;
+  }
+
+  .intro {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  main {
+    padding: 22px 14px 35px;
+  }
+}
+
+@media (max-width: 480px) {
+  .preview-wrap {
+    padding: 12px;
+  }
+
+  .settings {
+    padding: 15px;
+  }
+
+  .stage {
+    min-height: 260px;
+  }
+
+  .topbar {
+    padding: 12px 14px;
+  }
+
+  .pill {
+    font-size: 9px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">▶</div>
+    <div>
+      Poster Motion Studio
+      <small>Auto Animation Maker</small>
+    </div>
+  </div>
+  <div class="pill">✦ CREATOR WORKSPACE</div>
+</header>
+
+<main>
+  <section class="intro">
+    <div>
+      <div class="eyebrow">IMAGE → VIDEO</div>
+      <h1>আপনার পোস্টার, এবার চলমান।</h1>
+      <p>
+        পোস্টার আপলোড করুন, একটি Motion Preset বেছে নিন,
+        তারপর প্রিভিউ দেখে ভিডিও এক্সপোর্ট করুন।
+        মূল ছবির লেখা, মুখ ও লোগো পরিবর্তন করা হয় না।
+      </p>
+    </div>
+    <div class="status" id="fileStatus">
+      ● কোনো পোস্টার আপলোড করা হয়নি
+    </div>
+  </section>
+
+  <div class="workspace">
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>ভিডিও প্রিভিউ</h2>
+        <span id="previewStatus">Ready to create</span>
+      </div>
+
+      <div class="preview-wrap">
+        <div class="stage" id="stage">
+
+          <div class="empty" id="emptyState">
+            <div class="upload-icon">↥</div>
+            <h3>আপনার পোস্টার এখানে আনুন</h3>
+            <p>
+              PNG, JPG অথবা WEBP ফাইল বেছে নিন।
+              ভালো ফলের জন্য হাই-রেজোলিউশন পোস্টার ব্যবহার করুন।
+            </p>
+            <button class="btn btn-primary" id="uploadBtn">
+              ＋ পোস্টার আপলোড করুন
+            </button>
+          </div>
+
+          <img id="poster" alt="Uploaded poster preview">
+
+          <div class="stage-overlay" id="stageOverlay" style="display:none">
+            <span class="stage-tag" id="motionTag">Cinematic Zoom</span>
+            <span class="stage-tag" id="durationTag">10 sec</span>
+          </div>
+        </div>
+
+        <input type="file" id="fileInput"
+               accept="image/png,image/jpeg,image/webp" hidden>
+
+        <div class="preview-controls">
+          <button class="btn btn-secondary" id="replayBtn" disabled>
+            ↻ আবার দেখুন
+          </button>
+          <button class="btn btn-primary" id="playBtn" disabled>
+            ▶ অ্যানিমেশন প্রিভিউ
+          </button>
+        </div>
+
+        <div class="timeline">
+          <div class="timeline-top">
+            <span>ANIMATION TIMELINE</span>
+            <span id="timeReadout">00:00 / 00:10</span>
+          </div>
+          <div class="track">
+            <div class="track-fill" id="trackFill"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <div class="panel-head">
+        <h2>Auto Animation Settings</h2>
+        <span>01 / 03</span>
+      </div>
+
+      <div class="settings">
+
+        <div>
+          <div class="field-label">
+            Motion Preset
+            <small>একটি বেছে নিন</small>
+          </div>
+
+          <div class="preset-grid">
+
+            <button class="preset active" data-preset="zoom">
+              <span class="emoji">🎬</span>
+              <strong>Cinematic Zoom</strong>
+              <small>ধীরে সামনে এগোবে</small>
+            </button>
+
+            <button class="preset" data-preset="pan">
+              <span class="emoji">↔️</span>
+              <strong>Smooth Pan</strong>
+              <small>নরমভাবে পাশে যাবে</small>
+            </button>
+
+            <button class="preset" data-preset="float">
+              <span class="emoji">☁️</span>
+              <strong>Gentle Float</strong>
+              <small>হালকা ভাসমান গতি</small>
+            </button>
+
+            <button class="preset" data-preset="pulse">
+              <span class="emoji">✨</span>
+              <strong>Focus Pulse</strong>
+              <small>Zoom + soft glow</small>
+            </button>
+
+            <button class="preset" data-preset="reveal">
+              <span class="emoji">🌅</span>
+              <strong>Slow Reveal</strong>
+              <small>ধীরে দৃশ্য খুলবে</small>
+            </button>
+
+            <button class="preset" data-preset="none">
+              <span class="emoji">🖼️</span>
+              <strong>Clean Motion</strong>
+              <small>খুব সামান্য গতি</small>
+            </button>
+
+          </div>
+        </div>
+
+        <div>
+          <div class="field-label">
+            ভিডিওর দৈর্ঘ্য
+            <small>Duration</small>
+          </div>
+
+          <div class="duration-options">
+            <button class="duration" data-duration="5">5 sec</button>
+            <button class="duration active" data-duration="10">10 sec</button>
+            <button class="duration" data-duration="15">15 sec</button>
+            <button class="duration" data-duration="30">30 sec</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="field-label">Motion Control</div>
+
+          <div class="switch-row">
+            <div>
+              <strong>Seamless Loop</strong>
+              <small>শেষ থেকে আবার শুরুতে মসৃণভাবে</small>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="loopToggle" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="switch-row">
+            <div>
+              <strong>Soft Glow</strong>
+              <small>হালকা cinematic brightness</small>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="glowToggle">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="switch-row">
+            <div>
+              <strong>Keep Original Ratio</strong>
+              <small>পোস্টারের আসল অনুপাত বজায় রাখুন</small>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="ratioToggle" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="export-box">
+          <h3>আপনার ভিডিও এক্সপোর্ট করুন</h3>
+          <p>
+            ভিডিও তৈরি হওয়ার সময় এই পেজটি খোলা রাখুন।
+            ছবিটি আপনার ব্রাউজারেই প্রসেস করা হবে।
+          </p>
+
+          <button class="btn btn-primary" id="exportBtn" disabled>
+            ⬇ ভিডিও এক্সপোর্ট করুন (WEBM)
+          </button>
+
+          <div class="progress-wrap" id="progressWrap">
+            <div class="progress-text">
+              <span id="progressLabel">ভিডিও তৈরি হচ্ছে…</span>
+              <span id="progressPercent">0%</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-bar" id="progressBar"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="notice">
+          <b>গুরুত্বপূর্ণ:</b>
+          এই সংস্করণে পুরো পোস্টার একটি অক্ষত ছবি হিসেবে অ্যানিমেট হয়।
+          বাংলা লেখা, মুখ ও লোগো AI দিয়ে নতুন করে তৈরি করা হয় না।
+          WEBM এক্সপোর্টের সুবিধা ব্রাউজারভেদে ভিন্ন হতে পারে।
+        </div>
+
+      </div>
+    </aside>
+
+  </div>
+
+  <div class="footer">
+    <span>Poster Motion Studio · Local browser processing</span>
+    <span>Made for fast client poster videos</span>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+
+  const img = $('poster');
+  const stage = $('stage');
+  const empty = $('emptyState');
+
+  let imageURL = null;
+  let duration = 10;
+  let preset = 'zoom';
+  let animating = false;
+  let raf = 0;
+  let startTime = 0;
+  let previewLoop = true;
+
+  const presets = {
+    zoom: {
+      name: 'Cinematic Zoom',
+      transform: p => `scale(${1 + 0.12 * p})`,
+      filter: p => 'none'
+    },
+
+    pan: {
+      name: 'Smooth Pan',
+      transform: p =>
+        `scale(1.12) translate(${(p - 0.5) * -5}%, ${(p - 0.5) * 1.5}%)`,
+      filter: p => 'none'
+    },
+
+    float: {
+      name: 'Gentle Float',
+      transform: p =>
+        `scale(1.04) translate(${Math.sin(p * Math.PI * 2) * 0.7}%, ${Math.sin(p * Math.PI * 2) * -0.8}%)`,
+      filter: p => 'none'
+    },
+
+    pulse: {
+      name: 'Focus Pulse',
+      transform: p => `scale(${1.02 + Math.sin(p * Math.PI) * 0.07})`,
+      filter: p => `brightness(${1 + Math.sin(p * Math.PI) * 0.08})`
+    },
+
+    reveal: {
+      name: 'Slow Reveal',
+      transform: p =>
+        `scale(${1.16 - 0.12 * p}) translate(0, ${(0.5 - p) * 1.5}%)`,
+      filter: p => `brightness(${0.94 + 0.06 * p})`
+    },
+
+    none: {
+      name: 'Clean Motion',
+      transform: p => `scale(${1.015 + 0.015 * p})`,
+      filter: p => 'none'
+    }
+  };
+
+  function toast(message) {
+    const element = $('toast');
+    element.textContent = message;
+    element.style.display = 'block';
+
+    clearTimeout(toast.timer);
+
+    toast.timer = setTimeout(() => {
+      element.style.display = 'none';
+    }, 3500);
+  }
+
+  function fmt(seconds) {
+    return `00:${String(Math.floor(seconds)).padStart(2, '0')}`;
+  }
+
+  function setProgress(progress) {
+    const value = Math.max(0, Math.min(1, progress));
+
+    $('trackFill').style.width = (value * 100) + '%';
+
+    $('timeReadout').textContent =
+      `${fmt(value * duration)} / ${fmt(duration)}`;
+  }
+
+  function applyFrame(progress) {
+    const config = presets[preset];
+
+    img.style.objectFit =
+      $('ratioToggle').checked ? 'contain' : 'cover';
+
+    img.style.transform = config.transform(progress);
+
+    const glow = $('glowToggle').checked || preset === 'pulse';
+
+    img.style.filter = glow
+      ? `drop-shadow(0 0 ${4 + Math.sin(progress * Math.PI) * 10}px rgba(73,194,255,0.25)) ${config.filter(progress)}`
+      : config.filter(progress);
+
+    setProgress(progress);
+  }
+
+  function stopAnimation() {
+    animating = false;
+
+    if (raf) {
+      cancelAnimationFrame(raf);
+    }
+
+    raf = 0;
+  }
+
+  function animate(now) {
+    if (!animating) return;
+
+    let progress = (now - startTime) / (duration * 1000);
+
+    if (progress >= 1) {
+      if (previewLoop) {
+        startTime = now;
+        progress = 0;
+      } else {
+        progress = 1;
+        applyFrame(progress);
+        stopAnimation();
+
+        $('playBtn').textContent = '▶ অ্যানিমেশন প্রিভিউ';
+        $('previewStatus').textContent = 'Preview complete';
+
+        return;
+      }
+    }
+
+    applyFrame(progress);
+    raf = requestAnimationFrame(animate);
+  }
+
+  function startPreview() {
+    if (!imageURL) {
+      toast('আগে একটি পোস্টার আপলোড করুন।');
+      return;
+    }
+
+    stopAnimation();
+
+    animating = true;
+    startTime = performance.now();
+    previewLoop = $('loopToggle').checked;
+
+    $('playBtn').textContent = 'Ⅱ প্রিভিউ বন্ধ করুন';
+    $('previewStatus').textContent = 'Playing preview';
+
+    raf = requestAnimationFrame(animate);
+  }
+
+  function resetVisual() {
+    stopAnimation();
+
+    img.style.transform = 'scale(1)';
+    img.style.filter = 'none';
+
+    setProgress(0);
+
+    $('playBtn').textContent = '▶ অ্যানিমেশন প্রিভিউ';
+    $('previewStatus').textContent = 'Ready to preview';
+  }
+
+  function loadFile(file) {
+    if (!file) return;
+
+    if (!/^image\/(png|jpeg|webp)$/.test(file.type)) {
+      toast('PNG, JPG বা WEBP ফাইল ব্যবহার করুন।');
+      return;
+    }
+
+    if (imageURL) {
+      URL.revokeObjectURL(imageURL);
+    }
+
+    imageURL = URL.createObjectURL(file);
+
+    img.onload = () => {
+      $('fileStatus').textContent = '● ' + file.name;
+      $('exportBtn').disabled = false;
+      $('playBtn').disabled = false;
+      $('replayBtn').disabled = false;
+
+      $('previewStatus').textContent = 'Poster loaded';
+      $('motionTag').textContent = presets[preset].name;
+      $('durationTag').textContent = duration + ' sec';
+
+      resetVisual();
+
+      toast('পোস্টার আপলোড হয়েছে। এখন Animation Preset বেছে নিন।');
+    };
+
+    img.onerror = () => {
+      toast('ছবিটি খোলা যায়নি। অন্য একটি ছবি ব্যবহার করুন।');
+    };
+
+    img.src = imageURL;
+    img.style.display = 'block';
+    empty.style.display = 'none';
+    $('stageOverlay').style.display = 'flex';
+  }
+
+  $('uploadBtn').addEventListener('click', () => {
+    $('fileInput').click();
+  });
+
+  $('fileInput').addEventListener('change', event => {
+    loadFile(event.target.files[0]);
+  });
+
+  stage.addEventListener('dragover', event => {
+    event.preventDefault();
+    stage.style.borderColor = '#28c3ee';
+  });
+
+  stage.addEventListener('dragleave', () => {
+    stage.style.borderColor = '#293c57';
+  });
+
+  stage.addEventListener('drop', event => {
+    event.preventDefault();
+    stage.style.borderColor = '#293c57';
+
+    loadFile(event.dataTransfer.files[0]);
+  });
+
+  document.querySelectorAll('.preset').forEach(button => {
+    button.addEventListener('click', () => {
+      document.querySelectorAll('.preset').forEach(item => {
+        item.classList.remove('active');
+      });
+
+      button.classList.add('active');
+      preset = button.dataset.preset;
+
+      $('motionTag').textContent = presets[preset].name;
+
+      if (imageURL) {
+        resetVisual();
+        applyFrame(0);
+      }
+    });
+  });
+
+  document.querySelectorAll('.duration').forEach(button => {
+    button.addEventListener('click', () => {
+      document.querySelectorAll('.duration').forEach(item => {
+        item.classList.remove('active');
+      });
+
+      button.classList.add('active');
+
+      duration = Number(button.dataset.duration);
+
+      $('durationTag').textContent = duration + ' sec';
+
+      setProgress(0);
+
+      $('timeReadout').textContent =
+        `00:00 / ${fmt(duration)}`;
+    });
+  });
+
+  $('playBtn').addEventListener('click', () => {
+    if (animating) {
+      stopAnimation();
+
+      $('playBtn').textContent = '▶ অ্যানিমেশন প্রিভিউ';
+      $('previewStatus').textContent = 'Preview paused';
+    } else {
+      startPreview();
+    }
+  });
+
+  $('replayBtn').addEventListener('click', startPreview);
+
+  ['glowToggle', 'ratioToggle'].forEach(id => {
+    $(id).addEventListener('change', () => {
+      if (imageURL && !animating) {
+        applyFrame(0);
+      }
+    });
+  });
+
+  $('loopToggle').addEventListener('change', () => {
+    previewLoop = $('loopToggle').checked;
+  });
+
+  $('exportBtn').addEventListener('click', async () => {
+    if (!imageURL) return;
+
+    if (!window.MediaRecorder ||
+        !HTMLCanvasElement.prototype.captureStream) {
+      toast('ভিডিও এক্সপোর্টের জন্য আপডেটেড Chrome ব্যবহার করুন।');
+      return;
+    }
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    const maxW = 1080;
+    const maxH = 1920;
+
+    const imageW = img.naturalWidth;
+    const imageH = img.naturalHeight;
+
+    const scale = Math.min(maxW / imageW, maxH / imageH, 1);
+
+    canvas.width = Math.max(2, Math.round(imageW * scale));
+    canvas.height = Math.max(2, Math.round(imageH * scale));
+
+    const fps = 30;
+    const stream = canvas.captureStream(fps);
+
+    let mime = 'video/webm;codecs=vp9';
+
+    if (!MediaRecorder.isTypeSupported(mime)) {
+      mime = 'video/webm;codecs=vp8';
+    }
+
+    if (!MediaRecorder.isTypeSupported(mime)) {
+      mime = 'video/webm';
+    }
+
+    const chunks = [];
+    let recorder;
+
+    try {
+      recorder = new MediaRecorder(stream, {
+        mimeType: mime,
+        videoBitsPerSecond: 8000000
+      });
+    } catch (error) {
+      stream.getTracks().forEach(track => track.stop());
+
+      toast('ভিডিও এক্সপোর্ট চালু করা যায়নি। Chrome-এ আবার চেষ্টা করুন।');
+      return;
+    }
+
+    const button = $('exportBtn');
+
+    button.disabled = true;
+    button.textContent = '⏳ ভিডিও তৈরি হচ্ছে…';
+
+    $('progressWrap').style.display = 'block';
+    $('progressLabel').textContent = 'রিয়েল-টাইমে রেন্ডার হচ্ছে…';
+
+    function drawFrame(progress) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const config = presets[preset];
+
+      const match = config.transform(progress).match(/scale\(([\d.]+)/);
+      const zoom = match ? Number(match[1]) : 1;
+
+      let panX = 0;
+      let panY = 0;
+
+      if (preset === 'pan') {
+        panX = (progress - 0.5) * -0.05 * canvas.width;
+        panY = (progress - 0.5) * 0.015 * canvas.height;
+      }
+
+      if (preset === 'float') {
+        panX = Math.sin(progress * Math.PI * 2) * 0.007 * canvas.width;
+        panY = Math.sin(progress * Math.PI * 2) * -0.008 * canvas.height;
+      }
+
+      if (preset === 'reveal') {
+        panY = (0.5 - progress) * 0.015 * canvas.height;
+      }
+
+      const width = canvas.width * zoom;
+      const height = canvas.height * zoom;
+
+      ctx.save();
+
+      if ($('glowToggle').checked || preset === 'pulse') {
+        ctx.filter =
+          `brightness(${1 + (preset === 'pulse' ? Math.sin(progress * Math.PI) * 0.08 : 0)})`;
+      } else {
+        ctx.filter = 'none';
+      }
+
+      ctx.drawImage(
+        img,
+        (canvas.width - width) / 2 + panX,
+        (canvas.height - height) / 2 + panY,
+        width,
+        height
+      );
+
+      ctx.restore();
+    }
+
+    recorder.ondataavailable = event => {
+      if (event.data && event.data.size) {
+        chunks.push(event.data);
+      }
+    };
+
+    recorder.onerror = () => {
+      button.disabled = false;
+      button.textContent = '⬇ ভিডিও এক্সপোর্ট করুন (WEBM)';
+
+      stream.getTracks().forEach(track => track.stop());
+
+      toast('এক্সপোর্টে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
+    };
+
+    recorder.onstop = () => {
+      const blob = new Blob(chunks, { type: 'video/webm' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+
+      link.href = url;
+      link.download = `poster-motion-${duration}s.webm`;
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
+
+      stream.getTracks().forEach(track => track.stop());
+
+      button.disabled = false;
+      button.textContent = '⬇ আবার এক্সপোর্ট করুন (WEBM)';
+
+      $('progressLabel').textContent = 'ভিডিও তৈরি সম্পন্ন';
+      $('progressPercent').textContent = '100%';
+      $('progressBar').style.width = '100%';
+
+      $('previewStatus').textContent = 'Export complete';
+
+      toast('ভিডিও ডাউনলোড শুরু হয়েছে।');
+    };
+
+    try {
+      drawFrame(0);
+      recorder.start(250);
+
+      const start = performance.now();
+
+      function render(now) {
+        const elapsed = (now - start) / 1000;
+        const progress = Math.min(1, elapsed / duration);
+
+        drawFrame(progress);
+
+        const percent = Math.round(progress * 100);
+
+        $('progressBar').style.width = percent + '%';
+        $('progressPercent').textContent = percent + '%';
+
+        setProgress(progress);
+
+        if (progress < 1) {
+          requestAnimationFrame(render);
+        } else {
+          drawFrame(1);
+
+          setTimeout(() => {
+            if (recorder.state !== 'inactive') {
+              recorder.stop();
+            }
+          }, 250);
+        }
+      }
+
+      requestAnimationFrame(render);
+
+    } catch (error) {
+      if (recorder.state !== 'inactive') {
+        recorder.stop();
+      }
+
+      button.disabled = false;
+      button.textContent = '⬇ ভিডিও এক্সপোর্ট করুন (WEBM)';
+
+      toast('এক্সপোর্ট শুরু করা যায়নি।');
+    }
+  });
+
+  window.addEventListener('beforeunload', () => {
+    stopAnimation();
+
+    if (imageURL) {
+      URL.revokeObjectURL(imageURL);
+    }
+  });
+
+})();
+</script>
+
+</body>
+</html>
